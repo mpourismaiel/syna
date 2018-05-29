@@ -7,8 +7,13 @@
   "author": "Michael Grosser (stp-ip)",
   "license": "Apache",
   "scripts": {
-    "start": "webpack --watch --progress",
-    "build": "webpack --progress"
+    "build-js": "webpack --progress",
+    "build-hugo": "cd exampleSite && hugo -c content --config config.toml",
+    "watch-js": "webpack --watch --progress",
+    "watch-hugo": "cd exampleSite && hugo -c content --config config.toml server -D",
+    "dev": "nf start",
+    "start": "npm run watch-js",
+    "build": "npm run build-js && npm run build-hugo"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -17,6 +22,7 @@
     "concurrently": "^3.5.1",
     "css-loader": "^0.28.11",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "foreman": "^3.0.0",
     "mini-css-extract-plugin": "^0.4.0",
     "node-sass": "^4.8.3",
     "sass-loader": "^7.0.0",
