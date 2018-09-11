@@ -32,6 +32,7 @@
             ">
               {{- .content | markdownify -}}
             </div>
+            {{- partial "helpers/fragments.html" (dict "root" $ "real_page" $.root "page" $.page "page_scratch" $.page_scratch "starts_with" $.Name) -}}
           </div>
           <article class="col-md-9">
         {{- else }}

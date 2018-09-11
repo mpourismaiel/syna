@@ -73,6 +73,8 @@
 {{- $real_page := .real_page -}}
 {{- $page_scratch := .page_scratch -}}
 {{- $root := .root -}}
+{{- $starts_with := .starts_with -}}
+{{- $has_match := isset . "starts_with" -}}
 
 {{/* Lookup the directory of the file, split the path by slashes and find each
   parent directory. Regex is used to split the path. First slash is an edge
@@ -116,15 +118,23 @@
   additional _index directory) in the previous loop. Here we will extract all
   the fragments in those directories. We will remove the duplicates later. */}}
 {{- $page_scratch.Set "fragments" (slice) -}}
-{{- range $directory := sort ($page_scratch.Get "fragment_directories") -}}
-  {{- if $directory -}}
-    {{/* Every index.md or [page].md file can be a fragment as well. Even in
-      _index directories. */}}
-    {{- $page_scratch.Add "fragments" . -}}
-    {{/* Fragments are just page resources with type page (generally any .md 
-      file) */}}
-    {{- range ($directory.Resources.ByType "page") -}}
+{{- if $page_scratch.Get "fragment_directories" -}}
+  {{- range $directory := sort ($page_scratch.Get "fragment_directories") -}}
+    {{- if $directory -}}
+      {{/* Every index.md or [page].md file can be a fragment as well. Even in
+        _index directories. */}}
       {{- $page_scratch.Add "fragments" . -}}
+      {{/* Fragments are just page resources with type page (generally any .md 
+        file) */}}
+      {{- range ($directory.Resources.ByType "page") -}}
+        {{- if $has_match -}}
+          {{- if and (isset .Params "fragment") (hasPrefix .Params.fragment (printf "%s/" $starts_with)) -}}
+            {{- $page_scratch.Add "fragments" . -}}
+          {{- end -}}
+        {{- else if and (isset .Params "fragment") (not (in .Params.fragment "/")) -}}
+          {{- $page_scratch.Add "fragments" . -}}
+        {{- end -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}
@@ -150,13 +160,17 @@
 {{/* Disable React by default, we load the framework only if a fragment requires
   it. */}}
 {{- $.Scratch.Set "react" false -}}
-{{- range sort ($page_scratch.Get "page_fragments") "Params.weight" -}}
-  {{- if and (not .Params.disabled) (isset .Params "fragment") -}}
-    {{/* Cleanup .Name to be more useful within fragments */}}
-    {{- $name := strings.TrimSuffix ".md" (replace .Name "/index.md" "") -}}
+{{- if $page_scratch.Get "page_fragments" -}}
+  {{- range sort ($page_scratch.Get "page_fragments") "Params.weight" -}}
+    {{- if and (not .Params.disabled) (isset .Params "fragment") -}}
+      {{/* Cleanup .Name to be more useful within fragments */}}
+      {{- $name := strings.TrimSuffix ".md" (replace .Name "/index.md" "") -}}
 
-    {{- $file_path := strings.TrimSuffix ".md" (replace .File.Path "/index.md" "") -}}
-    {{- $context := dict "page_scratch" $page_scratch "root" $real_page "Site" $real_page.Site "page" $page "resources" $real_page.Resources "self" . "Params" .Params "Name" $name "file_path" $file_path }}
-    {{- partial (print "fragments/" .Params.fragment ".html") $context -}}
+      {{- $file_path := strings.TrimSuffix ".md" (replace .File.Path "/index.md" "") -}}
+      {{- $prefix := printf "%s/" $starts_with -}}
+      {{- $fragment_name := strings.TrimPrefix $prefix .Params.fragment -}}
+      {{- $context := dict "page_scratch" $page_scratch "root" $real_page "Site" $real_page.Site "page" $page "resources" $real_page.Resources "self" . "Params" .Params "Name" $name "file_path" $file_path }}
+      {{- partial (printf "fragments/%s.html" $fragment_name) $context -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
