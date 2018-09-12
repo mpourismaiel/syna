@@ -152,11 +152,13 @@
 {{- $.Scratch.Set "react" false -}}
 {{- range sort ($page_scratch.Get "page_fragments") "Params.weight" -}}
   {{- if and (not .Params.disabled) (isset .Params "fragment") -}}
-    {{/* Cleanup .Name to be more useful within fragments */}}
-    {{- $name := strings.TrimSuffix ".md" (replace .Name "/index.md" "") -}}
+    {{- if not (in .Params.fragment "/") -}}
+      {{/* Cleanup .Name to be more useful within fragments */}}
+      {{- $name := strings.TrimSuffix ".md" (replace .Name "/index.md" "") -}}
 
-    {{- $file_path := strings.TrimSuffix ".md" (replace .File.Path "/index.md" "") -}}
-    {{- $context := dict "page_scratch" $page_scratch "root" $real_page "Site" $real_page.Site "page" $page "resources" $real_page.Resources "self" . "Params" .Params "Name" $name "file_path" $file_path }}
-    {{- partial (print "fragments/" .Params.fragment ".html") $context -}}
+      {{- $file_path := strings.TrimSuffix ".md" (replace .File.Path "/index.md" "") -}}
+      {{- $context := dict "page_scratch" $page_scratch "root" $real_page "Site" $real_page.Site "page" $page "resources" $real_page.Resources "self" . "Params" .Params "Name" $name "file_path" $file_path }}
+      {{- partial (print "fragments/" .Params.fragment ".html") $context -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}

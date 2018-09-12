@@ -1,4 +1,6 @@
 {{- $self := .self -}}
+{{- $this := . -}}
+{{- $page_scratch := .page_scratch -}}
 {{- $bg := .Params.background | default "light" }}
 
 {{ "<!-- Content -->" | safeHTML }}
@@ -32,6 +34,15 @@
             ">
               {{- .content | markdownify -}}
             </div>
+            {{- range sort ($page_scratch.Get "page_fragments") "Params.weight" -}}
+              {{- if in .Params.fragment (printf "%s/" $this.Name) -}}
+                {{- $fragment := strings.TrimPrefix (printf "%s/" $this.Name) .Params.fragment -}}
+                {{- $name := strings.TrimSuffix ".md" (replace .Name "/index.md" "") -}}
+                {{- $file_path := strings.TrimSuffix ".md" (replace .File.Path "/index.md" "") -}}
+                {{- $context := dict "page_scratch" $page_scratch "root" $this.root "Site" $this.root.Site "page" $this.page "resources" $this.root.Resources "self" . "Params" .Params "Name" $name "file_path" $file_path }}
+                {{- partial (print "fragments/" $fragment ".html") $context -}}
+              {{- end -}}
+            {{- end -}}
           </div>
           <article class="col-md-9">
         {{- else }}
