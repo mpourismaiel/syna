@@ -1,4 +1,5 @@
 {{- $self := .self -}}
+{{- $form_name := .Params.form_name | default (printf "contact-form-%s" .Name) -}}
 {{- if .Params.recaptcha -}}
   {{- .page_scratch.Add "js" "https://www.google.com/recaptcha/api.js" -}}
 {{- end }}
@@ -18,13 +19,14 @@
         <form
           class="contact"
           method="POST"
-          name="{{- .Params.form_name | default (printf "contact-form-%s" .Name) }}"
+          name="{{ $form_name }}"
           id="{{ printf "contact-form-%s" .Name }}
           {{- if .Params.netlify -}}
             " netlify-recaptcha netlify data-has-netlify="true"
           {{- else -}}
             " action="{{- .Params.post_url | default (printf "https://formspree.io/%s" .Params.email) -}}"
           {{- end }}>
+            <input type="hidden" name="form-name" value="{{ $form_name }}" />
             <div class="row py-3">
               <div class="col-md-6">
                 {{- with .Params.fields.name }}
