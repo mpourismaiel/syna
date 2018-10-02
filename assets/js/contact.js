@@ -36,7 +36,7 @@ const validator = new Validator({
       ) ||
       $('.g-recaptcha').length === 0
     ) {
-      $.post(action, serializedForm)
+      $.post(action, serializedForm, { contentType: form.dataset.hasNetlify ? 'application/x-www-form-urlencoded' : 'application/json;charset=UTF-8' })
         .then(() => genericSuccess.removeClass('d-none'))
         .catch(() => genericError.removeClass('d-none'));
     } else if (typeof grecaptcha !== "undefined") {
