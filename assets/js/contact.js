@@ -22,17 +22,20 @@ const validator = new Validator({
       genericError.removeClass('d-none');
       return false;
     }
-window.a = {}
-window.a.$ = $
-window.a.e = e
-window.a.form = form
+
     e.preventDefault()
     const id = form.getAttribute('id')
     const action = $(`#${id}`).attr('action')
     const genericSuccess = $(`form[id=${id}] .generic-success`)
     const genericError = $(`form[id=${id}] .generic-error`)
     const serializedForm = $(`#${id}`).serialize()
-    if ($('.g-recaptcha').length === 0) {
+    if (
+      (
+        form.dataset.hasNetlify &&
+        !!form.querySelector('[name=g-recaptcha-response]').value
+      ) ||
+      $('.g-recaptcha').length === 0
+    ) {
       $.post(action, serializedForm)
         .then(() => genericSuccess.removeClass('d-none'))
         .catch(() => genericError.removeClass('d-none'));
