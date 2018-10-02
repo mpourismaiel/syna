@@ -109,7 +109,11 @@ $.ajax = function ajax({
     xhr.onreadystatechange = () => {
       if (xhr.readyState == 4) {
         if (xhr.status == 200) {
-            resolve(JSON.parse(xhr.responseXML || xhr.responseText));
+            if (contentType === "application/json;charset=UTF-8") {
+              resolve(JSON.parse(xhr.responseXML || xhr.responseText));
+            } else {
+              resolve(xhr.responseXML || xhr.responseText);
+            }
         } else {
             reject(xhr.statusText);
         }
