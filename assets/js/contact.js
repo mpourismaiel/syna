@@ -22,6 +22,7 @@ const validator = new Validator({
       genericError.removeClass('d-none');
       return false;
     }
+window.a = {}
 window.a.$ = $
 window.a.e = e
 window.a.form = form
