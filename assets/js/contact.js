@@ -22,7 +22,9 @@ const validator = new Validator({
       genericError.removeClass('d-none');
       return false;
     }
-
+window.a.$ = $
+window.a.e = e
+window.a.form = form
     e.preventDefault()
     const id = form.getAttribute('id')
     const action = $(`#${id}`).attr('action')
