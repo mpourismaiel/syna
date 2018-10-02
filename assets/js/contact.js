@@ -23,12 +23,12 @@ const validator = new Validator({
       return false;
     }
 
-    e.preventDefault()
-    const id = form.getAttribute('id')
-    const action = $(`#${id}`).attr('action')
-    const genericSuccess = $(`form[id=${id}] .generic-success`)
-    const genericError = $(`form[id=${id}] .generic-error`)
-    const serializedForm = $(`#${id}`).serialize()
+    e.preventDefault();
+    const id = form.getAttribute('id');
+    const action = $(`#${id}`).attr('action') || '';
+    const genericSuccess = $(`form[id=${id}] .generic-success`);
+    const genericError = $(`form[id=${id}] .generic-error`);
+    const serializedForm = $(`#${id}`).serialize();
     if (
       (
         form.dataset.hasNetlify &&
@@ -43,8 +43,8 @@ const validator = new Validator({
       if (grecaptcha.getResponse() !== "") {
         $.post(action, serializedForm)
           .then(() => {
-            genericSuccess.removeClass('d-none')
-            $(`form[id=${id}] .success`).removeClass('d-none')
+            genericSuccess.removeClass('d-none');
+            $(`form[id=${id}] .success`).removeClass('d-none');
           })
           .catch(() => genericError.removeClass('d-none'));
       } else {
