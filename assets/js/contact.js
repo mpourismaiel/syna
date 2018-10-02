@@ -29,6 +29,9 @@ const validator = new Validator({
     const genericSuccess = $(`form[id=${id}] .generic-success`);
     const genericError = $(`form[id=${id}] .generic-error`);
     const serializedForm = $(`#${id}`).serialize();
+    window.a = serializedForm
+    window.b = $
+    window.c = action
     if (
       (
         form.dataset.hasNetlify &&
