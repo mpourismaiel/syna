@@ -23,10 +23,6 @@ const validator = new Validator({
       return false;
     }
 
-    if (form.dataset.hasNetlify) {
-      return;
-    }
-
     e.preventDefault()
     const id = form.getAttribute('id')
     const action = $(`#${id}`).attr('action')
