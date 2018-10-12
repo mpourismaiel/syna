@@ -25,6 +25,7 @@
           {{- else -}}
             {{- safeHTMLAttr (printf " action=\"%s\"" (.Params.post_url | default (printf "https://formspree.io/%s" .Params.email))) -}}
           {{- end }}>
+            <input type="hidden" name="form-name" value="{{- .Params.form_name | default (printf "contact-form-%s" .Name) }}" />
             <div class="row py-3">
               <div class="col-md-6">
                 {{- with .Params.fields.name }}
