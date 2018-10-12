@@ -15,11 +15,7 @@
     {{- partial "helpers/section-header.html" (dict "bg" $bg "params" .Params) }}
     <div class="row">
       <div class="col-12">
-        <form
-          class="contact"
-          method="POST"
-          name="{{- .Params.form_name | default (printf "contact-form-%s" .Name) }}"
-          id="{{ printf "contact-form-%s" .Name }}"
+        <form class="contact" method="POST" name="{{- .Params.form_name | default (printf "contact-form-%s" .Name) }}" id="{{ printf "contact-form-%s" .Name }}"
           {{- if .Params.netlify -}}
             {{- safeHTMLAttr (print " netlify-recaptcha netlify data-has-netlify=\"true\"") -}}
           {{- else -}}
