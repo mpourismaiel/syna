@@ -55,9 +55,19 @@
       </div>
       <div class="row justify-content-between pr-3">
         <div class="col-auto d-flex flex-column justify-content-center">
-          <div class="row mx-0">
+          <div class="row mx-0 align-items-center">
             <h5 class="my-0">Price:</h5>
-            <h5 class="my-0 pl-2" data-render="price_text">{{- .Params.price_text | default .Params.price -}}</h5>
+            {{- if eq (len .Params.prices) 1 }}
+              {{- with index .Params.prices 0 }}
+                <h5 class="my-0 pl-2 single-price" data-render="price_text" data-currency="{{ .currency }}" data-amount="{{ .amount }}">{{- .text | default .amount -}}</h5>
+              {{- end -}}
+            {{- else -}}
+              <div class="btn-group btn-group-toggle btn-group-sm ml-2" data-toggle="buttons">
+                {{- range .Params.prices }}
+                  <input type="button" class="btn btn-primary" data-currency="{{ .currency }}" data-amount="{{ .amount }}" value="{{ .text | default .amount }}">
+                {{- end }}
+              </div>
+            {{- end }}
           </div>
         </div>
         <div class="col-auto px-0 d-flex flex-column">

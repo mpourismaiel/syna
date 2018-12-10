@@ -1,6 +1,12 @@
 +++
+fragment = "content"
+weight = 121
++++
+
+<details><summary>Code</summary>
+```+++
 fragment = "stripe"
-weight = 110
+weight = 120
 background = "secondary"
 
 title = "Payment Fragment"
@@ -12,8 +18,18 @@ stripe_token = "pk_test_36PckiAlsGm9KmHj9b034GAW"
 product = "Example Product"
 
 [[prices]]
-  text = "10.00$"
+  text = "10$"
   amount = "1000"
+  currency = "usd"
+
+[[prices]]
+  text = "20$"
+  amount = "2000"
+  currency = "usd"
+
+[[prices]]
+  text = "30$"
+  amount = "3000"
   currency = "usd"
 
 [email]
@@ -21,3 +37,5 @@ product = "Example Product"
 +++
 
 You can pay for the product by filling this form (provided by Stripe).
+```
+</details>

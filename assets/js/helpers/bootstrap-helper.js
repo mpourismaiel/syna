@@ -38,3 +38,19 @@ function toggleDropdown() {
 window.addEventListener('resize', closeMenusOnResize, false);
 Array.from(dropdowns || []).forEach(node => node.addEventListener('click', toggleDropdown))
 Array.from(toggle || []).forEach(node => node.addEventListener('click', e => toggleMenu(node), false));
+
+Array.from($('.btn-group-toggle .btn')).forEach((node, i) => {
+  if (i === 0) {
+    node.classList.add('active');
+  }
+
+  node.addEventListener('click', e => {
+    e.preventDefault();
+    const btn = e.target;
+    const activeButton = btn.parentElement.querySelector('.btn.active');
+    if (activeButton) {
+      activeButton.classList.remove('active');
+    }
+    btn.classList.add('active');
+  })
+});

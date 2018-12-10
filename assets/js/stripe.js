@@ -28,9 +28,8 @@ function onSubmit(configId, form, stripe, card) {
         const serializedForm = Object.assign(JSON.parse(form.serialize(true)), {
           stripeToken: result.token.id,
           product: config.product,
-          price: parseInt(config.price.match(/\w+/g).reduce((tmp, match) => tmp + match, ''), 10),
-          price_text: config.price_text,
-          currency: config.currency,
+          price: form.$('.btn.active, .single-price')[0].dataset.amount,
+          currency: form.$('.btn.active, .single-price')[0].dataset.currency,
           from: window.location.href,
         });
         $.post(action, JSON.stringify(serializedForm))
@@ -68,8 +67,6 @@ window.syna.stream.subscribe('pricing:change', function({ product, price, price_
 function updateStripeFragments(product, price, price_text, currency) {
   window.syna.api.toArray('stripe').forEach(config => {
     config.product = product;
-    config.price = price;
-    config.price_text = price_text || price;
     config.currency = currency;
     $(`${config.form} [data-render="price_text"]`).text(price_text || price || null);
     $(`${config.form} input[name=email]`)[0].focus();
