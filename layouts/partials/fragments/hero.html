@@ -93,10 +93,13 @@
   </div>
 </header>
 <script>
-  var fragmentName = "{{ .Name }}";
-  {{- $file_path := printf "%s%s/config.json" .page.File.Dir .Name -}}
-  window.syna.api.register("hero", "hero-" + fragmentName, {
-    selector: "{{ printf "%s-particles-js" .Name }}",
-    config: {{ if fileExists $file_path -}} JSON.parse({{ readFile $file_path | safeHTML }}) {{- else -}} null {{- end -}},
-  });
+  {{ $root := . }}
+  {{ with .page.File }}
+    var fragmentName = "{{ $root.Name }}";
+    {{- $file_path := printf "%s%s/config.json" .Dir $root.Name -}}
+    window.syna.api.register("hero", "hero-" + fragmentName, {
+      selector: "{{ printf "%s-particles-js" $root.Name }}",
+      config: {{ if fileExists $file_path -}} JSON.parse({{ readFile $file_path | safeHTML }}) {{- else -}} null {{- end -}},
+    });
+  {{ end }}
 </script>

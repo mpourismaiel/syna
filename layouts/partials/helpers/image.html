@@ -13,16 +13,22 @@
 
 {{/* Page specific resource */}}
 {{- if .root.page -}}
-  {{- $location := (printf "%s/%s" .root.page.File.Dir $image) -}}
-  {{- if (fileExists (printf "content/%s" $location)) -}}
-    {{- .root.page_scratch.Set "resource" (.root.page.Resources.GetMatch $image) -}}
+  {{ $root := .root }}
+  {{ with .root.page.File }}
+    {{- $location := (printf "%s/%s" .Dir $image) -}}
+    {{- if (fileExists (printf "content/%s" $location)) -}}
+      {{- $root.page_scratch.Set "resource" ($root.page.Resources.GetMatch $image) -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 
 {{/* Fragment specific resource */}}
 {{- $location := (printf "%s/%s" .root.file_path $image) -}}
 {{- if (fileExists (printf "content/%s" $location)) -}}
-  {{- .root.page_scratch.Set "resource" (.root.page.Resources.GetMatch (strings.TrimPrefix .root.page.File.Dir $location)) -}}
+  {{ $root := .root }}
+  {{ with .root.page.File }}
+    {{- $root.page_scratch.Set "resource" ($root.page.Resources.GetMatch (strings.TrimPrefix .Dir $location)) -}}
+  {{ end }}
 {{- end -}}
 
 {{- if eq (.root.page_scratch.Get "resource") nil -}}

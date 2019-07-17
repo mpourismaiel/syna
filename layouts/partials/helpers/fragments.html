@@ -75,10 +75,21 @@
 {{- $real_page := $layout_info.real_page -}}
 {{- $root := $layout_info.root -}}
 {{- $is_404 := $layout_info.is_404 -}}
+<h1>{{ $root.Language.Lang }}</h1>
+{{ if $real_page.IsTranslated }}
+<h5>Translations</h5>
+<ul>
+    {{ range $real_page.Translations }}
+    <li>
+        <a href="{{ .Permalink }}">{{ .Lang }}: {{ .Title }}{{ if .IsPage }} ({{ i18n "wordCount" . }}){{ end }}</a>
+    </li>
+    {{ end }}
+</ul>
+{{ end }}
 
 {{- $page_scratch.Set "fragment_directories" (slice) -}}
 {{- if eq $is_404 true -}}
-  {{- $page_scratch.Add "fragment_directories" ($real_page.Site.GetPage "page" "/_global") -}}
+  {{- $page_scratch.Add "fragment_directories" (dict "path" "/_global" "index" 0) -}}
 {{- else -}}
   {{/* Lookup the directory of the file, split the path by slashes and find each
     parent directory. Regex is used to split the path. First slash is an edge
@@ -94,32 +105,27 @@
   {{/* Loop through all the parent directories and look for _global directories,
     and in case we are in the $real_page item and if the page is a homepage or a
     section, look for _index directory. */}}
-  {{- $page_scratch.Set "fragment_directories_tmp" (slice) -}}
   {{- range $index, $section := $page_scratch.Get "sections" -}}
     {{- $directory := $section -}}
     {{- if (eq (add $index 1) (len ($page_scratch.Get "sections"))) -}}
       {{- if ne $real_page.Kind "page" -}}
         {{/* Last item is the page being rendered. If it's a section or homepage,
           fragments must be at _index directory */}}
-        {{- $page_scratch.Set "active_page" ($real_page.Site.GetPage "page" (printf "%s%s" $real_page.File.Dir "_index")) -}}
+        {{- $page_scratch.Set "active_page" (printf "%s/%s" $real_page.File.Dir "_index") -}}
       {{- else if $page -}}
-        {{- $page_scratch.Set "active_page" $page -}}
+        {{- $page_scratch.Set "active_page" (printf "/%s" $page.File.Path) -}}
       {{- end -}}
     {{- else if ge $index 1 -}}
       {{/* Sections between the first and last are found and their _global directories
         are taken into account */}}
       {{- $directory := (delimit (first (add $index 1) ($page_scratch.Get "sections")) "/") -}}
-      {{- $page_scratch.Set "active_page" ($real_page.Site.GetPage "page" (printf "%s/%s" $directory "_global")) -}}
+      {{- $page_scratch.Set "active_page" (printf "%s/%s" $directory "_global") -}}
     {{- else -}}
       {{/* First section is always the root directory and we look for it's _global
         directory */}}
-      {{- $page_scratch.Set "active_page" ($real_page.Site.GetPage "page" (printf "%s/%s" $directory "_global")) -}}
+      {{- $page_scratch.Set "active_page" (printf "%s/%s" $directory "_global") -}}
     {{- end -}}
-    {{- $page_scratch.Add "fragment_directories_tmp" (dict "directory" ($page_scratch.Get "active_page") "index" $index) -}}
-  {{- end -}}
-
-  {{- range sort ($page_scratch.Get "fragment_directories_tmp") "index" "desc" -}}
-    {{- $page_scratch.Add "fragment_directories" .directory -}}
+    {{- $page_scratch.Add "fragment_directories" (dict "path" ($page_scratch.Get "active_page") "index" $index) -}}
   {{- end -}}
 {{- end -}}
 
@@ -127,14 +133,16 @@
   additional _index directory) in the previous loop. Here we will extract all
   the fragments in those directories. We will remove the duplicates later. */}}
 {{- $page_scratch.Set "fragments" (slice) -}}
-{{- range $directory := ($page_scratch.Get "fragment_directories") -}}
-  {{- if $directory -}}
+{{- range $directory := sort ($page_scratch.Get "fragment_directories") "index" "desc" -}}
+  {{ $active_page := partial "helpers/multilang-getpage.html" (dict "directory" $directory "real_page" $real_page "root" $root) }}
+  <li>{{$directory.path}} => <mark>{{$active_page}}</mark></li>
+  {{- if $active_page -}}
     {{/* Every index.md or [page].md file can be a fragment as well. Even in
       _index directories. */}}
     {{- $page_scratch.Add "fragments" . -}}
     {{/* Fragments are just page resources with type page (generally any .md 
       file) */}}
-    {{- range ($directory.Resources.ByType "page") -}}
+    {{- range ($active_page.Resources.ByType "page") -}}
       {{- $page_scratch.Add "fragments" . -}}
     {{- end -}}
   {{- end -}}

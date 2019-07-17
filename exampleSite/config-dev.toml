@@ -19,6 +19,17 @@ googleAnalytics = ""
 date = ["date", "lastmod"]
 lastmod = ["lastmod", ":git", "date"]
 
+[languages]
+  [languages.en]
+    weight = 1
+
+  [languages.fa]
+    title = "آکر لبز"
+    weight = 2
+    [languages.fa.params]
+      name = "آکر لبز"
+      description = "تم اوپن‌سورس برای پروژه بعدی شما"
+
 [params]
   name = "Okkur Labs"
   description = "Open Source Theme for your next project"

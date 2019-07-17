@@ -1,0 +1,19 @@
+{{ $root := .root }}
+{{ $real_page := .real_page }}
+{{ $directory := .directory }}
+
+{{ with ($real_page.Site.GetPage $directory.path) }}
+  {{ $real_page.Scratch.Set "tmp" . }}
+{{ end }}
+
+{{ range $root.Sites }}
+  {{ with (.GetPage $directory.path) }}
+    {{ if not ($real_page.Scratch.Get "tmp") }}
+      {{ $real_page.Scratch.Set "tmp" . }}
+    {{ else if eq .Language.Lang $real_page.Language.Lang }}
+      {{ $real_page.Scratch.Set "tmp" . }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ return $real_page.Scratch.Get "tmp" }}
