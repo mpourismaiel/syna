@@ -1,7 +1,7 @@
 <!--
 # v0.16.0
 _2018_
-  - [Downloads for v0.16.0](https://github.com/okkur/syna/releases/tag/v0.16.0)
+  - [Downl asdasdoads for v0.16.0](https://github.com/okkur/syna/releases/tag/v0.16.0)
   - [Changelog since v0.15.0](#changes-since-v015)
 
 ## Documentation for v0.16
